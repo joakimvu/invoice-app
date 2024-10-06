@@ -5,24 +5,19 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 import { createAction } from "@/app/actions";
-import { SyntheticEvent, useState, startTransition } from "react";
+import { SyntheticEvent, useState } from "react";
+import Form from "next/form";
 import SubmitButton from "@/components/SubmitButton";
 
 export default function Home() {
   const [submitState, setSubmitState] = useState("ready");
 
   const handleOnSubmit = async (event: SyntheticEvent) => {
-    event.preventDefault();
-    if (submitState === "pending") return;
+    if (submitState === "pending") {
+      event.preventDefault();
+      return;
+    }
     setSubmitState("pending");
-    const target = event.target as HTMLFormElement;
-
-    startTransition(async () => {
-      const formData = new FormData(target);
-      await createAction(formData);
-    });
-
-    console.log("hey");
   };
 
   return (
@@ -31,7 +26,7 @@ export default function Home() {
         <h1 className="text-3xl font-bold">Create a new Invoice</h1>
       </div>
 
-      <form
+      <Form
         action={createAction}
         onSubmit={handleOnSubmit}
         className="grid gap-4 max-w-xs"
@@ -66,7 +61,7 @@ export default function Home() {
         <div>
           <SubmitButton />
         </div>
-      </form>
+      </Form>
     </main>
   );
 }
