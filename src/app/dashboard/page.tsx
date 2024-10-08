@@ -15,10 +15,18 @@ import { db } from "@/db";
 import { Invoices } from "@/db/schema";
 import { cn } from "@/lib/utils";
 import Container from "@/components/Container";
+import { auth } from "@clerk/nextjs/server";
+import { eq } from "drizzle-orm";
 
 export default async function Home() {
-  const results = await db.select().from(Invoices);
-  console.log("results", results);
+  const { userId } = auth();
+
+  if (!userId) return;
+
+  const results = await db
+    .select()
+    .from(Invoices)
+    .where(eq(Invoices.userId, userId));
 
   return (
     <main className="h-full">
