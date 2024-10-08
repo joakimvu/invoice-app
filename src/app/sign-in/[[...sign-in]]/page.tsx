@@ -6,6 +6,8 @@ import * as SignIn from "@clerk/elements/sign-in";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
+import { AnimatePresence, motion } from "framer-motion";
+
 export default function SignInPage() {
   return (
     <div className="grid w-full flex-grow items-center bg-white px-4 sm:justify-center">
@@ -52,7 +54,14 @@ export default function SignInPage() {
             <p className="mb-4 text-center text-sm/5 text-neutral-500">
               Alternatively, sign in with these platforms
             </p>
-            <div className="space-y-2">
+            <div className="space-y-6">
+              <p className="text-center">
+                <SignIn.Passkey asChild>
+                  <Button className="w-full" variant="outline">
+                    Continue with Passkey
+                  </Button>
+                </SignIn.Passkey>
+              </p>
               <Clerk.Connection name="google" asChild>
                 <Button
                   className="flex gap-2 w-full font-bold"
@@ -77,7 +86,7 @@ export default function SignInPage() {
                       </clipPath>
                     </defs>
                   </svg>
-                  Login with Google
+                  Log in with Google
                 </Button>
               </Clerk.Connection>
             </div>
@@ -183,7 +192,75 @@ export default function SignInPage() {
               submit
               className="relative w-full rounded-md bg-neutral-600 bg-gradient-to-b from-neutral-500 to-neutral-600 py-1.5 text-sm text-white shadow-[0_1px_1px_0_theme(colors.white/10%)_inset,0_1px_2.5px_0_theme(colors.black/36%)] outline-none ring-1 ring-inset ring-neutral-600 before:absolute before:inset-0 before:rounded-md before:bg-white/10 before:opacity-0 hover:before:opacity-100 focus-visible:outline-offset-2 focus-visible:outline-neutral-600 active:bg-neutral-600 active:text-white/60 active:before:opacity-0"
             >
-              Login
+              Log in
+            </SignIn.Action>
+          </SignIn.Strategy>
+          <SignIn.Strategy name="totp">
+            <header className="text-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 40 40"
+                className="mx-auto size-10"
+              >
+                <mask
+                  id="a"
+                  width="40"
+                  height="40"
+                  x="0"
+                  y="0"
+                  maskUnits="userSpaceOnUse"
+                >
+                  <circle cx="20" cy="20" r="20" fill="#D9D9D9" />
+                </mask>
+                <g fill="#0A0A0A" mask="url(#a)">
+                  <path d="M43.5 3a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46V2ZM43.5 8a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46V7ZM43.5 13a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46v-1ZM43.5 18a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46v-1ZM43.5 23a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46v-1ZM43.5 28a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46v-1ZM43.5 33a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46v-1ZM43.5 38a.5.5 0 0 0 0-1v1Zm0-1h-46v1h46v-1Z" />
+                  <path d="M27 3.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM25 8.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM23 13.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM21.5 18.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM20.5 23.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM22.5 28.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM25 33.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2ZM27 38.5a1 1 0 1 0 0-2v2Zm0-2h-46v2h46v-2Z" />
+                </g>
+              </svg>
+              <h1 className="mt-4 text-xl font-medium tracking-tight text-neutral-950">
+                Verify Authenticator Code
+              </h1>
+            </header>
+            <Clerk.GlobalError className="block text-sm text-red-600" />
+            <Clerk.Field name="code">
+              <Clerk.Label className="sr-only">Authenticator code</Clerk.Label>
+              <Clerk.Input
+                type="otp"
+                required
+                className="flex justify-center gap-1"
+                render={({ value, status }) => (
+                  <div
+                    data-status={status}
+                    className="relative h-9 w-8 rounded-md bg-white ring-1 ring-inset ring-zinc-300 data-[status=selected]:bg-sky-400/10 data-[status=selected]:shadow-[0_0_8px_2px_theme(colors.sky.400/30%)] data-[status=selected]:ring-sky-400"
+                  >
+                    <AnimatePresence>
+                      {value && (
+                        <motion.span
+                          initial={{ opacity: 0, scale: 0.75 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.75 }}
+                          className="absolute inset-0 flex items-center justify-center text-zinc-950"
+                        >
+                          {value}
+                        </motion.span>
+                      )}
+                      {value}
+                    </AnimatePresence>
+                    {status === "cursor" && (
+                      <motion.div
+                        layoutId="otp-input-focus"
+                        transition={{ ease: [0.2, 0.4, 0, 1], duration: 0.2 }}
+                        className="absolute inset-0 z-10 rounded-[inherit] border border-sky-400 bg-sky-400/10 shadow-[0_0_8px_2px_theme(colors.sky.400/30%)]"
+                      />
+                    )}
+                  </div>
+                )}
+              />
+              <Clerk.FieldError className="mt-2 block text-xs text-red-600" />
+            </Clerk.Field>
+            <SignIn.Action submit asChild>
+              <Button className="w-full font-bold">Log in</Button>
             </SignIn.Action>
           </SignIn.Strategy>
           <p className="text-center text-sm text-neutral-500">
