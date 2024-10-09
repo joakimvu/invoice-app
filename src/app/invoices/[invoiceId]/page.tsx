@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { auth } from "@clerk/nextjs/server";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
+import { ChevronDown } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -15,6 +16,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-meny";
+
+import { AVAILABLE_STATUSES } from "@/data/invoices";
+import { updateStatusAciton } from "@/app/actions";
+import { Button } from "@/components/ui/button";
 
 export default async function InvoicePage({
   params,
@@ -58,12 +63,24 @@ export default async function InvoicePage({
             </Badge>
           </h1>
           <DropdownMenu>
-            <DropdownMenuTrigger>Change Status</DropdownMenuTrigger>
+            <DropdownMenuTrigger>
+              <Button className="flex items-center gap-2" variant="outline">
+                Change Status
+                <ChevronDown className="w-4 h-auto" />
+              </Button>
+            </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem>Open</DropdownMenuItem>
-              <DropdownMenuItem>Paid</DropdownMenuItem>
-              <DropdownMenuItem>Void</DropdownMenuItem>
-              <DropdownMenuItem>Uncollectible</DropdownMenuItem>
+              {AVAILABLE_STATUSES.map((status) => {
+                return (
+                  <DropdownMenuItem key={status.id}>
+                    <form action={updateStatusAciton}>
+                      <input type="hidden" name="id" value={invoiceId} />
+                      <input type="hidden" name="status" value={status.id} />
+                      <button>{status.label}</button>
+                    </form>
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
