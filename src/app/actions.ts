@@ -4,18 +4,33 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { auth } from "@clerk/nextjs/server";
 
-import { Invoices, Status } from "@/db/schema";
+import { Customers, Invoices, Status } from "@/db/schema";
 import { db } from "@/db";
 import { and, eq } from "drizzle-orm";
 
 export async function createAction(formData: FormData) {
-  const { userId } = auth();
-  const value = Math.floor(parseFloat(String(formData.get("value"))) * 100);
-  const description = formData.get("description") as string;
+  const { userId, orgId } = auth();
 
   if (!userId) {
     return;
   }
+
+  const value = Math.floor(parseFloat(String(formData.get("value"))) * 100);
+  const description = formData.get("description") as string;
+  const name = formData.get("name") as string;
+  const email = formData.get("email") as string;
+
+  const [customer] = await db
+    .insert(Customers)
+    .values({
+      name,
+      email,
+      userId,
+      organizationId: orgId || null,
+    })
+    .returning({
+      id: Customers.id,
+    });
 
   const results = await db
     .insert(Invoices)
@@ -23,7 +38,9 @@ export async function createAction(formData: FormData) {
       value,
       description,
       userId,
+      customerId: customer.id,
       status: "open",
+      organizationId: orgId || null,
     })
     .returning({
       id: Invoices.id,
