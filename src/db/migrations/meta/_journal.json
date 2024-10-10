@@ -15,6 +15,20 @@
       "when": 1728393816501,
       "tag": "0001_colorful_silver_sable",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1728562441183,
+      "tag": "0002_even_network",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1728565510362,
+      "tag": "0003_supreme_liz_osborn",
+      "breakpoints": true
     }
   ]
 }
