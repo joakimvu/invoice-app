@@ -32,7 +32,7 @@ export async function createAction(formData: FormData) {
   redirect(`/invoices/${results[0].id}`);
 }
 
-export async function updateStatusAciton(formData: FormData) {
+export async function updateStatusAction(formData: FormData) {
   const { userId } = auth();
 
   if (!userId) {
@@ -50,4 +50,22 @@ export async function updateStatusAciton(formData: FormData) {
     );
 
   revalidatePath(`/invoices/${invoiceId}`, "page");
+}
+
+export async function deleteInvoiceAction(formData: FormData) {
+  const { userId } = auth();
+
+  if (!userId) {
+    return;
+  }
+
+  const invoiceId = formData.get("id") as string;
+
+  const results = await db
+    .delete(Invoices)
+    .where(
+      and(eq(Invoices.id, parseInt(invoiceId)), eq(Invoices.userId, userId))
+    );
+
+  redirect("/dashboard");
 }
