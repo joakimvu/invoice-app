@@ -1,3 +1,5 @@
-Dette er en Next.js prosjekt fra youtube https://www.youtube.com/watch?v=Mcw8Mp8PYUE
+Prosjektet er bygget på Next.js, Xata, Sentry, Clerk, shadcn
 
-## Full Stack Fakurerings App bygget med Next.js 15, Clerk, & Xata
+## Full Stack Fakurerings App
+
+Dette er et prosjekt med steg for steg fra youtube: https://www.youtube.com/watch?v=Mcw8Mp8PYUE
